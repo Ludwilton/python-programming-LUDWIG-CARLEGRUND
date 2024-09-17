@@ -1,2 +1,2 @@
 # python-programming-LUDWIG-CARLEGRUND
-labb 1
+Detta repo innehåller

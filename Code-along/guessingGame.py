@@ -8,13 +8,7 @@ while attempts < 10:
     user_input = rng.randint(1,100)
 
     while user_input != rng_number:
-
-        i += 1
-        print(i)
-        user_input = rng.randint(1,100)
-
-    
-    print(user_input, rng_number)
+        pass
     if user_input == rng_number:
         print("Du vann!")
         break
