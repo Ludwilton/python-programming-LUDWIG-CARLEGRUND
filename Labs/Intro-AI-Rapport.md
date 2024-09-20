@@ -51,10 +51,16 @@ _this explanation is quite summarized and generalized since going into too much 
 
 #### Sources
 [kdnuggets](https://www.kdnuggets.com/2018/12/machine-learning-project-checklist.html) - general workflow
+
 [towards data science](https://towardsdatascience.com/workflow-of-a-machine-learning-project-ec1dba419b94) - general workflow
+
 [w3schools](https://www.w3schools.com/ai/ai_regressions.asp) - linear regression (visualization)
+
 [geeksforgeeks](https://www.geeksforgeeks.org/ml-linear-regression/#what-is-linear-regression) linear regression
+
 [machinelearningmastery.com](https://machinelearningmastery.com/linear-regression-for-machine-learning/) linear regression
+
 [stackoverflow](https://stackoverflow.blog/2020/10/12/how-to-put-machine-learning-models-into-production/) - how to put a model into production
+
 [medium](https://moez-62905.medium.com/easily-deploy-machine-learning-models-from-the-comfort-of-your-notebook-9068a88f4cf5) - how to deploy a model
   *& my memory from the countless of youtube videos i've watched on the subject thus far*
