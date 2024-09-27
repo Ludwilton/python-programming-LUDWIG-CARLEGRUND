@@ -8,28 +8,27 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
 
-# Base URL for the Letterboxd page
 base_url = "https://letterboxd.com/lddec/films/page/"
 
-# Function to fetch the average user rating using Selenium
+
 def fetch_average_user_rating(film_page_url):
     options = Options()
-    options.headless = True  # Run in headless mode (no UI)
+    options.headless = True
 
     with webdriver.Chrome(service=Service(), options=options) as driver:
         driver.get(film_page_url)
         time.sleep(2) 
 
         try:
-            # Locate the average rating in the sidebar
+
             avg_rating_tag = driver.find_element(By.CSS_SELECTOR, 'section.ratings-histogram-chart span.average-rating a')
-            avg_rating_value = avg_rating_tag.text.strip()  # Extract the rating value (e.g., "3.2")
-            avg_rating_text = avg_rating_tag.get_attribute('data-original-title')  # Full text for additional details
+            avg_rating_value = avg_rating_tag.text.strip()
+            avg_rating_text = avg_rating_tag.get_attribute('data-original-title')
             
-            # Keep only the numerical part of the average rating
-            avg_rating_number = avg_rating_value.split()[0]  # Extract just the number (e.g., "3.66")
+
+            avg_rating_number = avg_rating_value.split()[0]
             print(f"Average rating for {film_page_url}: {avg_rating_text} ({avg_rating_number})")
-            return avg_rating_number, avg_rating_text  # Return just the number
+            return avg_rating_number, avg_rating_text
             
         except Exception as e:
             print(f"Average rating for {film_page_url}: No Rating (No Rating), Error: {e}")
@@ -37,7 +36,7 @@ def fetch_average_user_rating(film_page_url):
 
 
 
-# Function to scrape film ratings, genres, and average user rating
+
 def scrape_letterboxd(url, single_film=False):
     response = requests.get(url)
     response.raise_for_status()  
@@ -71,9 +70,9 @@ def scrape_letterboxd(url, single_film=False):
             film_page_url = f"https://letterboxd.com{film_link}"
             print(f"Fetching genres and average rating for {film_slug}...")
 
-            # Fetch genres
+
             film_response = requests.get(film_page_url)
-            film_response.raise_for_status()  # Check for request errors
+            film_response.raise_for_status()
             
             film_soup = BeautifulSoup(film_response.text, 'html.parser')
 
@@ -81,10 +80,10 @@ def scrape_letterboxd(url, single_film=False):
             genres = film_soup.find_all('a', class_='text-slug')
             film_genres = [genre.text.strip() for genre in genres if genre.has_attr('href') and 'genre' in genre['href']]
             
-            # Fetch the average user rating using the new function
+
             avg_rating_value, avg_rating_text = fetch_average_user_rating(film_page_url)
 
-            # Poster rating extraction
+
             rating = film.find('p', class_='poster-viewingdata').find('span', class_='rating')
             film_rating = rating.text.strip() if rating else "No Rating"
 
@@ -92,7 +91,7 @@ def scrape_letterboxd(url, single_film=False):
                 'name': film_slug,
                 'rating': film_rating,
                 'genres': ', '.join(film_genres),
-                'avg_user_rating': avg_rating_value  # Only numerical value now
+                'avg_user_rating': avg_rating_value
             })
 
     return film_data
@@ -113,8 +112,8 @@ if __name__ == "__main__":
     
     option = input("Enter 'single' to scrape a single film or 'all' to scrape all films across pages: ").strip().lower()
 
-    if option == 'single':
-        url = f"{base_url}1/"  # Scrape the first page
+    if option == 'single': # test
+        url = f"{base_url}1/"
         films_info = scrape_letterboxd(url, single_film=True)
         all_films.extend(films_info)
     elif option == 'all':
