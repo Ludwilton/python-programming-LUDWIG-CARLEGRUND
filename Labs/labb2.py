@@ -3,6 +3,7 @@ import csv
 import pandas as pd
 import numpy as np
 import os
+import random as rng
 print(os.getcwd())
 csv_file = "/Users/luddecmc/Desktop/SKOLARBETE-ITHS/repos/python-programming-LUDWIG-CARLEGRUND/Labs/datapoints.csv"
 
@@ -12,6 +13,14 @@ test_points = [
     [22, 34],
     [20.5, 34]
 ]
+
+with open(csv_file, "r") as data:
+    lines = data.readlines()
+data = []
+for line in lines:
+    row = line.strip().split(",")
+    data.append(row)
+
 
 def txt_to_csv():
     with open("repos/python-programming-LUDWIG-CARLEGRUND/Labs/datapoints.txt", "r") as txt_file:
@@ -41,27 +50,95 @@ def plot_csv(csv_file):
     plt.show()
 
 
-def euc_distance(a):
+def euc_distance(a,b):
     return np.sqrt(np.sum((a - b) ** 2))
 
 
-def calc_distances():
-    with open(csv_file, "r") as data:
-        lines = data.readlines()
 
-    data = []
-    for line in lines:
-        row = line.strip().split(",")
-        data.append(row)
-    data_points = [row[:2] for row in data]
-    print(data_points)
-    label_points = [row[2:] for row in data]
-    print(label_points)
-    data = np.array(data_points, dtype=float)
-    print(data)
+
+def calc_distances(test_points = test_points, data = data):
+
+    # data_points = [row[:2] for row in data]
+    # print(data_points)
+    # label_points = [row[2:] for row in data]
+    # print(label_points)
+    # data = np.array(data_points, dtype=float)
+    # print(data)
+    data = np.array(data, dtype=float)
+
+    print(test_points)
+    min_number_list = []
+    all_lowest_numbers = []
     
+    # jämför test punkter mot datapunkter, lägg sedan index av minsta distance för varje test punkt i en lista.
+    for i, test_point in enumerate(test_points):
+        print(f"\nDistances for test point: {i+1} {test_point}")
+
+        for data_point in data:
+            distances = [euc_distance(test_point, data_point[:2])]
+    
+            for j, distance in enumerate(distances):
+                print(f"{i+1}, {distance}")
+                min_number_list.append(distance)
+
+        lowest_number =  min_number_list.index(min((min_number_list)))
+        print(f"minsta nummer för {i+1}, {lowest_number}")
+    
+        all_lowest_numbers.append(lowest_number)
+        min_number_list = []
+
+    # skriv ut 
+    counter = 0
+    for i in all_lowest_numbers:
+        if data[i][2:] == 1:
+            print(f"test punkt {counter+1} {test_points[counter]} minsta datapunkt index: {i}: Pikachu")
+        else:
+            print(f"test punkt {counter+1} {test_points[counter]} minsta datapunkt index: {i}: Pichu")
+        counter += 1
+
+def scramble_dataset():
+    data = random.shuffle(data)
+    test_points = # första 50 i listan
+    data_points = # resterande av listan
+
+
+
+def main_menu():
+
+    choices = {
+        1: "läs in datapoints och konvertera till .csv",
+        2: "plotta datapunkter",
+        3: "kalkylera minsta avstånd mellan test och datapunkter",
+        4: "slumpa en fördelning på 100/50 av datapunkterna och kalkylera"
+     }
+    for key, value in choices.items():
+        print(f"{key}, {value}") 
+
+    choice = input("Välj ditt val: ")
+    while True:
+        pass
+
 
 
 # txt_to_csv()
 # plot_csv(csv_file)
-calc_distances()
+# main_menu()
+
+calc_distances([[10.5, 20],[18, 23], [30, 32], [10, 20], [12.5, 50]],[[19.332572350434354,32.25325633655492,0],
+[24.73645685241186,35.33291181124776,0],
+[23.79257560586339,38.10372825362463,1],
+[24.557612968127465,36.73144402805611,1],
+[20.191281253428173,35.06966921830237,0],
+[25.813562951888365,35.561029988644336,1],
+[24.923378667802954,34.463907946680294,1],
+[25.311244044578427,34.117212558131975,1],
+[22.819091361866796,34.25516433025548,1],
+[19.639358214988224,34.56117030001663,0],
+[18.341233265627693,31.399261188293124,0],
+[22.723629043769336,34.83845262048311,1],
+[25.82936770950206,33.16210202637511,1],
+[20.23890182459327,32.78945132868386,0],
+[17.905128921789093,28.88813385482529,0],
+[24.385289647525166,37.335669057387726,1],
+[26.525412887538252,35.2192205449002,1]])
+#calc_distances()
