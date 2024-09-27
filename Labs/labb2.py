@@ -14,6 +14,7 @@ test_points = [
     [20.5, 34]
 ]
 
+
 with open(csv_file, "r") as data:
     lines = data.readlines()
 data = []
@@ -65,12 +66,14 @@ def calc_distances(test_points = test_points, data = data):
     # data = np.array(data_points, dtype=float)
     # print(data)
     data = np.array(data, dtype=float)
+    test_points = np.array(test_points, dtype=float)
+
 
     print(test_points)
     min_number_list = []
     all_lowest_numbers = []
     
-    # jämför test punkter mot datapunkter, lägg sedan index av minsta distance för varje test punkt i en lista.
+    # jämför testpunkter mot datapunkter, lägg sedan index av minsta distance för varje test punkt i en lista.
     for i, test_point in enumerate(test_points):
         print(f"\nDistances for test point: {i+1} {test_point}")
 
@@ -96,10 +99,13 @@ def calc_distances(test_points = test_points, data = data):
             print(f"test punkt {counter+1} {test_points[counter]} minsta datapunkt index: {i}: Pichu")
         counter += 1
 
-def scramble_dataset():
-    data = random.shuffle(data)
-    test_points = # första 50 i listan
-    data_points = # resterande av listan
+def scramble_dataset(data = data):
+    print(data)
+    dataset = np.random.permutation(data)
+    print(dataset)
+    test_points = dataset[0:50, :2]
+    data_points = dataset[50:]
+    calc_distances(test_points,data_points)
 
 
 
@@ -124,21 +130,23 @@ def main_menu():
 # plot_csv(csv_file)
 # main_menu()
 
-calc_distances([[10.5, 20],[18, 23], [30, 32], [10, 20], [12.5, 50]],[[19.332572350434354,32.25325633655492,0],
-[24.73645685241186,35.33291181124776,0],
-[23.79257560586339,38.10372825362463,1],
-[24.557612968127465,36.73144402805611,1],
-[20.191281253428173,35.06966921830237,0],
-[25.813562951888365,35.561029988644336,1],
-[24.923378667802954,34.463907946680294,1],
-[25.311244044578427,34.117212558131975,1],
-[22.819091361866796,34.25516433025548,1],
-[19.639358214988224,34.56117030001663,0],
-[18.341233265627693,31.399261188293124,0],
-[22.723629043769336,34.83845262048311,1],
-[25.82936770950206,33.16210202637511,1],
-[20.23890182459327,32.78945132868386,0],
-[17.905128921789093,28.88813385482529,0],
-[24.385289647525166,37.335669057387726,1],
-[26.525412887538252,35.2192205449002,1]])
+# calc_distances([[10.5, 20],[18, 23], [30, 32], [10, 20], [12.5, 50]],[[19.332572350434354,32.25325633655492,0],
+# [24.73645685241186,35.33291181124776,0],
+# [23.79257560586339,38.10372825362463,1],
+# [24.557612968127465,36.73144402805611,1],
+# [20.191281253428173,35.06966921830237,0],
+# [25.813562951888365,35.561029988644336,1],
+# [24.923378667802954,34.463907946680294,1],
+# [25.311244044578427,34.117212558131975,1],
+# [22.819091361866796,34.25516433025548,1],
+# [19.639358214988224,34.56117030001663,0],
+# [18.341233265627693,31.399261188293124,0],
+# [22.723629043769336,34.83845262048311,1],
+# [25.82936770950206,33.16210202637511,1],
+# [20.23890182459327,32.78945132868386,0],
+# [17.905128921789093,28.88813385482529,0],
+# [24.385289647525166,37.335669057387726,1],
+# [26.525412887538252,35.2192205449002,1]])
 #calc_distances()
+
+scramble_dataset()
