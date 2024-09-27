@@ -46,11 +46,10 @@ def euc_distance(a):
 
 
 def calc_distances():
-    
     with open(csv_file, "r") as data:
         lines = data.readlines()
 
-    data = []       
+    data = []
     for line in lines:
         row = line.strip().split(",")
         data.append(row)
@@ -60,12 +59,8 @@ def calc_distances():
     print(label_points)
     data = np.array(data_points, dtype=float)
     print(data)
-
-
-
-
     
-            
+
 
 # txt_to_csv()
 # plot_csv(csv_file)
