@@ -80,7 +80,7 @@ def calc_distances(test_points = test_points, data = data):
         for data_point in data:
             distances = [euc_distance(test_point, data_point[:2])]
     
-            for j, distance in enumerate(distances):
+            for distance in distances:
                 print(f"{i+1}, {distance}")
                 min_number_list.append(distance)
 
