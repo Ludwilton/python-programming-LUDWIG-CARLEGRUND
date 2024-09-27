@@ -14,6 +14,8 @@ test_points = [
     [20.5, 34]
 ]
 
+k = 5
+
 
 with open(csv_file, "r") as data:
     lines = data.readlines()
@@ -36,7 +38,6 @@ def txt_to_csv():
             csv_write.writerow(row)
     
 
-
 def plot_csv(csv_file):
     csv_data = pd.read_csv(csv_file, names=["width cm", "height cm", "label"])
     width = csv_data["width cm"]
@@ -55,16 +56,8 @@ def euc_distance(a,b):
     return np.sqrt(np.sum((a - b) ** 2))
 
 
+def calc_distances(test_points = test_points, data = data, k = k):
 
-
-def calc_distances(test_points = test_points, data = data):
-
-    # data_points = [row[:2] for row in data]
-    # print(data_points)
-    # label_points = [row[2:] for row in data]
-    # print(label_points)
-    # data = np.array(data_points, dtype=float)
-    # print(data)
     data = np.array(data, dtype=float)
     test_points = np.array(test_points, dtype=float)
 
@@ -72,7 +65,7 @@ def calc_distances(test_points = test_points, data = data):
     print(test_points)
     min_number_list = []
     all_lowest_numbers = []
-    
+    lowest_k = []
     # jämför testpunkter mot datapunkter, lägg sedan index av minsta distance för varje test punkt i en lista.
     for i, test_point in enumerate(test_points):
         print(f"\nDistances for test point: {i+1} {test_point}")
@@ -83,7 +76,11 @@ def calc_distances(test_points = test_points, data = data):
             for distance in distances:
                 print(f"{i+1}, {distance}")
                 min_number_list.append(distance)
-
+        
+        min_number_list.sort()
+        
+        lowest_k = min_number_list[:k]
+        print(lowest_k)
         lowest_number =  min_number_list.index(min((min_number_list)))
         print(f"minsta nummer för {i+1}, {lowest_number}")
     
@@ -98,6 +95,8 @@ def calc_distances(test_points = test_points, data = data):
         else:
             print(f"test punkt {counter+1} {test_points[counter]} minsta datapunkt index: {i}: Pichu")
         counter += 1
+
+
 
 def scramble_dataset(data = data):
     print(data)
@@ -115,7 +114,7 @@ def main_menu():
         1: "läs in datapoints och konvertera till .csv",
         2: "plotta datapunkter",
         3: "kalkylera minsta avstånd mellan test och datapunkter",
-        4: "slumpa en fördelning på 100/50 av datapunkterna och kalkylera"
+        4: "slumpa en fördelning på 100/50 av datapunkterna och kalkylera",
      }
     for key, value in choices.items():
         print(f"{key}, {value}") 
@@ -147,6 +146,7 @@ def main_menu():
 # [17.905128921789093,28.88813385482529,0],
 # [24.385289647525166,37.335669057387726,1],
 # [26.525412887538252,35.2192205449002,1]])
-#calc_distances()
 
-scramble_dataset()
+calc_distances()
+
+#scramble_dataset()
