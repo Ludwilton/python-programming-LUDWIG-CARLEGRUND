@@ -77,10 +77,13 @@ def calc_distances(test_points = test_points, data = data, k = k):
                 print(f"{i+1}, {distance}")
                 min_number_list.append(distance)
         
+                    # implementing k nearest
+
         min_number_list.sort()
         
         lowest_k = min_number_list[:k]
         print(lowest_k)
+        
         lowest_number =  min_number_list.index(min((min_number_list)))
         print(f"minsta nummer för {i+1}, {lowest_number}")
     
