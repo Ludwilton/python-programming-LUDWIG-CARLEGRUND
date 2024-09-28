@@ -78,6 +78,9 @@ def calc_distances(test_points = test_points, data = data, k = k):
                 min_number_list.append(distance)
         
                     # implementing k nearest
+                    # kopiera listan > skriv ut 10 minsta, hitta index av kopierade listan genom originallistan
+                    # lägg in index av 10 minsta i lista
+                    #
 
         min_number_list.sort()
         
