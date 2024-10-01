@@ -66,6 +66,7 @@ def calc_distances(test_points = test_points, data = data, k = k):
     min_number_list = []
     all_lowest_numbers = []
     lowest_k = []
+    
     # jämför testpunkter mot datapunkter, lägg sedan index av minsta distance för varje test punkt i en lista.
     for i, test_point in enumerate(test_points):
         print(f"\nDistances for test point: {i+1} {test_point}")
@@ -80,22 +81,16 @@ def calc_distances(test_points = test_points, data = data, k = k):
                     # implementing k nearest
                     # kopiera listan > skriv ut 10 minsta, hitta index av kopierade listan genom originallistan
                     # lägg in index av 10 minsta i lista
-                    #
 
-        # tar lägsta
+                    # hitta lägsta, lägg in i listan sen ta bort, loopa över : x K(n) ,
+
+        
         lowest_number =  min_number_list.index(min((min_number_list)))
         print(f"minsta nummer för {i+1}, {lowest_number}")
-        
-        # k (N) lägsta + index
-        k_lowest_index = sorted(enumerate(min_number_list), key=lambda x: x[1])[:k]
+       
+        min_number_list.sort()
 
-        k_lowest = [index for index, value in k_lowest_index]
-
-        print(f"index för {k} lägsta siffror för punkt {i+1}: {k_lowest_index}")
-
-        lowest_k = [min_number_list[:k]]
-
-        
+        lowest_k = min_number_list[:k]
         all_lowest_numbers.append(lowest_number)
         min_number_list = []
     
