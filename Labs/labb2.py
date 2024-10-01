@@ -72,10 +72,10 @@ def calc_distances(test_points = test_points, data = data, k = k):
         print(f"\nDistances for test point: {i+1} {test_point}")
 
         for data_point in data:
-            distances = [euc_distance(test_point, data_point[:2])]
-    
+            distances = [euc_distance(test_point, data_point[:2]), data_point[2]]
+            print(distances)
             for distance in distances:
-                print(f"{i+1}, {distance}")
+                print(f"TP: {i+1}, Distance: {distance}")
                 min_number_list.append(distance)
         
                     # implementing k nearest
@@ -84,13 +84,13 @@ def calc_distances(test_points = test_points, data = data, k = k):
 
                     # hitta lägsta, lägg in i listan sen ta bort, loopa över : x K(n) ,
 
-        
+
+            
         lowest_number =  min_number_list.index(min((min_number_list)))
         print(f"minsta nummer för {i+1}, {lowest_number}")
-       
-        min_number_list.sort()
 
-        lowest_k = min_number_list[:k]
+            
+            
         all_lowest_numbers.append(lowest_number)
         min_number_list = []
     
@@ -102,7 +102,7 @@ def calc_distances(test_points = test_points, data = data, k = k):
     # skriv ut 
     counter = 0
     for i in all_lowest_numbers:
-        if data[i][2:] == 1:
+        if data[i][:2] == 1:
             print(f"test punkt {counter+1} {test_points[counter]} minsta datapunkt index: {i}: Pikachu")
         else:
             print(f"test punkt {counter+1} {test_points[counter]} minsta datapunkt index: {i}: Pichu")
@@ -110,7 +110,21 @@ def calc_distances(test_points = test_points, data = data, k = k):
 
 
 
-def scramble_dataset(data = data):
+def scramble_dataset(data = data): # TODO byt ut funktionen så att den tar en jämn uppdelning av pichu/pikachu
+    '''
+    # något sånt här borde funka
+    for i in range(data)
+        if data[:, 2:] == 0 pichu_list.append
+        else:
+            pikachu_list.append
+
+    pichu_random = np.random.permutation(pichu_list)
+    pikachu_random = np.random.permutation(pikachu_list)
+    test_points = pichu_random[50:, :2]
+    data_points = pichu_random[50:]
+    test_points += pikachu_random[:50, :2]
+    data_points += pikachu_random[:50]
+    '''
     print(data)
     dataset = np.random.permutation(data)
     print(dataset)
@@ -161,4 +175,4 @@ def main_menu():
 
 calc_distances()
 
-#scramble_dataset()
+# scramble_dataset()
