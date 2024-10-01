@@ -14,7 +14,7 @@ test_points = [
     [20.5, 34]
 ]
 
-k = 5
+k = 1
 
 
 with open(csv_file, "r") as data:
@@ -63,47 +63,40 @@ def calc_distances(test_points = test_points, data = data, k = k):
 
 
     print(test_points)
-    min_number_list = []
-    all_lowest_numbers = []
-    lowest_k = []
+    k_lowest_each_point = []
     
     # jämför testpunkter mot datapunkter, lägg sedan index av minsta distance för varje test punkt i en lista.
     for i, test_point in enumerate(test_points):
         print(f"\nDistances for test point: {i+1} {test_point}")
-
-        for data_point in data:
-            distances = [euc_distance(test_point, data_point[:2]), data_point[2]]
-            print(distances)
-            for distance in distances:
-                print(f"TP: {i+1}, Distance: {distance}")
-                min_number_list.append(distance)
         
-                    # implementing k nearest
+        distances = [(euc_distance(test_point, data_point[:2]), data_point[2]) for data_point in data]
+            # for distance in distances:
+            #    print(f"TP: {i+1}, Distance: {distance}")
+            #    min_number_list.append(distance)
+        
+                   # implementing k nearest
                     # kopiera listan > skriv ut 10 minsta, hitta index av kopierade listan genom originallistan
                     # lägg in index av 10 minsta i lista
 
                     # hitta lägsta, lägg in i listan sen ta bort, loopa över : x K(n) ,
+        
+        counter = 0
+        for j in distances:
+            counter += 1
+            print(f"avstånd mellan TP:{i+1} och DP:{counter} {j}")
+        sorted_distances = sorted(distances, key=lambda x: x[0])
+        k_lowest_each_point.append(sorted_distances[0:k])
 
 
-            
-        lowest_number =  min_number_list.index(min((min_number_list)))
-        print(f"minsta nummer för {i+1}, {lowest_number}")
+    # ceil() rundar uppåt
+    # floor rundar neråt
+    # om summan av alla k / k = 
+    # round() rundar vanligt
 
-            
-            
-        all_lowest_numbers.append(lowest_number)
-        min_number_list = []
-    
-    
-    
-
-    print(f"här --- {lowest_k}")
-    
-    # skriv ut 
     counter = 0
-    for i in all_lowest_numbers:
-        if data[i][:2] == 1:
-            print(f"test punkt {counter+1} {test_points[counter]} minsta datapunkt index: {i}: Pikachu")
+    for i in k_lowest_each_point:
+        if i[0] == 1:
+            print(f"test punkt {counter+1} {test_points[counter]} minsta datapunkt index: {i[1:]}: Pikachu")
         else:
             print(f"test punkt {counter+1} {test_points[counter]} minsta datapunkt index: {i}: Pichu")
         counter += 1
