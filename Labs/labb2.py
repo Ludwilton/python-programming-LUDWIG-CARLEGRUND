@@ -14,8 +14,12 @@ test_points = [
     [20.5, 34]
 ]
 
-k = 1
+k = 6 # antal grannar calc_distances kollar mot
 
+tp = 0
+fp = 0
+tn = 0
+fn = 0
 
 with open(csv_file, "r") as data:
     lines = data.readlines()
@@ -56,22 +60,27 @@ def euc_distance(a,b):
     return np.sqrt(np.sum((a - b) ** 2))
 
 
-def calc_distances(test_points = test_points, data = data, k = k): # knn algorithm, test_points tar inte in klassifiering.
+def calc_distances(test_points = test_points, data = data, k = k): # knn algorithm
+    global tp
+    global fp
+    global tn
+    global fn
+
 
     data = np.array(data, dtype=float)
-    test_points = np.array(test_points, dtype=float)
+    test_points = np.array(test_points, dtype=float) 
     k_lowest_each_point = []
     
     # jämför testpunkter mot datapunkter, passar även vidare klass för varje datapunkt
-    for i, test_point in enumerate(test_points):
+    for i, test_point in enumerate(test_points): # för varje rad/element i test_points
         print(f"\nAvstånd för test point: {i+1} {test_point}")
-        distances = [(euc_distance(test_point, data_point[:2]), data_point[2]) for data_point in data]
+        distances = [(euc_distance(test_point[:2], data_point[:2]), data_point[2]) for data_point in data] # avstånd för varje rad i data_points
 
         for c, j in enumerate(distances):
             print(f"avstånd mellan TP:{i+1} och DP:{c+1} {j}")
         
-        sorted_distances = sorted(distances, key=lambda x: x[0])
-        k_lowest_each_point.append(sorted_distances[0:k])
+        sorted_distances = sorted(distances, key=lambda x: x[0]) # passar vidare klassifiering 
+        k_lowest_each_point.append(sorted_distances[0:k]) # lägger till K antal lägsta för varje test punkt
 
     for c, neighbors in enumerate(k_lowest_each_point): 
         labels = [neighbor[1] for neighbor in neighbors]
@@ -82,6 +91,31 @@ def calc_distances(test_points = test_points, data = data, k = k): # knn algorit
             print(f"test punkt {c+1} är pichu")
         
 
+        # jämför tp_class(0 eller 1) mot test_points klasser -> rad[c] i test_points[2]
+        if tp_class == 1 and tp_class == test_points[c,2]:
+           #True P
+           tp += 1
+        elif tp_class == 1 and tp_class != test_points[c,2]:
+           #False P
+           fp += 1
+        elif tp_class == 0 and tp_class == test_points[c,2]:
+           #True N
+           tn += 1
+        elif tp_class == 0 and tp_class != test_points[c,2]:
+           #False N  
+           fn += 1
+    
+
+
+
+    # print(fp)
+    # print(tp)
+    # print(tn)
+    # print(fn)
+        # print(f"pålitlighet = {accuracy}")
+        
+        
+        
 
 def scramble_dataset(data = data): # delar upp och slumpmässigt delar ut punkter av båda klasser till test/data points med jämn fördelning
     pichu_list = []
@@ -101,7 +135,7 @@ def scramble_dataset(data = data): # delar upp och slumpmässigt delar ut punkte
     pichu_random = np.random.permutation(pichu_list) # slumpar innan concat
     pikachu_random = np.random.permutation(pikachu_list)
     
-    test_points = np.concatenate((pichu_list[50:, :2], pikachu_random[50:, :2]), axis=0) # fördelar upp pichu/pikachu klasser 50/25 i data/test
+    test_points = np.concatenate((pichu_list[50:], pikachu_random[50:]), axis=0) # fördelar upp pichu/pikachu klasser 50/25 i data/test
     data_points = np.concatenate((pichu_random[:50], pikachu_random[:50]), axis=0)
     
     test_points_randomized = np.random.permutation(test_points) # slumpar efter concat, annars är alla pikachu klasser sist i listan
@@ -154,3 +188,15 @@ def main_menu():
 
 
 scramble_dataset()
+scramble_dataset()
+scramble_dataset()
+scramble_dataset()
+scramble_dataset()
+scramble_dataset()
+scramble_dataset()
+scramble_dataset()
+scramble_dataset()
+scramble_dataset()
+scramble_dataset()
+accuracy = (tp + tn) / (tp+tn+fp+fn)
+print(f"pålitlighet: {accuracy*100:.2f}%")
