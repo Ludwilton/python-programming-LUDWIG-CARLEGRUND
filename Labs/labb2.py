@@ -14,7 +14,7 @@ test_points = [
     [20.5, 34]
 ]
 
-k = 1
+k = 2
 
 
 with open(csv_file, "r") as data:
@@ -80,12 +80,22 @@ def calc_distances(test_points = test_points, data = data, k = k):
 
                     # hitta lägsta, lägg in i listan sen ta bort, loopa över : x K(n) ,
         
-        counter = 0
-        for j in distances:
-            counter += 1
-            print(f"avstånd mellan TP:{i+1} och DP:{counter} {j}")
+
+        for c, j in enumerate(distances):
+            print(f"avstånd mellan TP:{i+1} och DP:{c+1} {j}")
+        
         sorted_distances = sorted(distances, key=lambda x: x[0])
         k_lowest_each_point.append(sorted_distances[0:k])
+
+    
+    for c, neighbors in enumerate(k_lowest_each_point): 
+        labels = [neighbor[1] for neighbor in neighbors]
+        tp_class = round(sum(labels) / k)
+        if tp_class == 1:
+            print(f"test punkt {c+1} är pikachu")
+        else:
+            print(f"test punkt {c+1} är pichu")
+        
 
 
     # ceil() rundar uppåt
@@ -93,13 +103,14 @@ def calc_distances(test_points = test_points, data = data, k = k):
     # om summan av alla k / k = 
     # round() rundar vanligt
 
-    counter = 0
-    for i in k_lowest_each_point:
-        if i[0] == 1:
-            print(f"test punkt {counter+1} {test_points[counter]} minsta datapunkt index: {i[1:]}: Pikachu")
-        else:
-            print(f"test punkt {counter+1} {test_points[counter]} minsta datapunkt index: {i}: Pichu")
-        counter += 1
+    # counter = 0
+    # for i in k_lowest_each_point:
+    #     for j in i:
+    #         if j[0] == 1:
+    #             print(f"test punkt {counter+1} {test_points[counter]} minsta datapunkt index: {i[1:]}: Pikachu")
+    #         else:
+    #             print(f"test punkt {counter+1} {test_points[counter]} minsta datapunkt index: {i}: Pichu")
+    #         counter += 1
 
 
 
@@ -132,7 +143,7 @@ def main_menu():
     choices = {
         1: "läs in datapoints och konvertera till .csv",
         2: "plotta datapunkter",
-        3: "kalkylera minsta avstånd mellan test och datapunkter",
+        3: "kalkylera minsta avstånd mellan test och datapunkter, specifiera K",
         4: "slumpa en fördelning på 100/50 av datapunkterna och kalkylera",
      }
     for key, value in choices.items():
