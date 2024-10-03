@@ -14,7 +14,7 @@ test_points = [
     [20.5, 34]
 ]
 
-k = 6 # antal grannar calc_distances kollar mot
+k = 10 # antal grannar calc_distances kollar mot
 
 tp = 0
 fp = 0
@@ -60,12 +60,12 @@ def euc_distance(a,b):
     return np.sqrt(np.sum((a - b) ** 2))
 
 
-def calc_distances(test_points = test_points, data = data, k = k): # knn algorithm
+def calc_distances(test_points = test_points, data = data, k = k, test_point_classes = True): # knn algorithm
+   
     global tp
     global fp
     global tn
     global fn
-
 
     data = np.array(data, dtype=float)
     test_points = np.array(test_points, dtype=float) 
@@ -91,67 +91,61 @@ def calc_distances(test_points = test_points, data = data, k = k): # knn algorit
             print(f"test punkt {c+1} är pichu")
         
 
-        # jämför tp_class(0 eller 1) mot test_points klasser -> rad[c] i test_points[2]
-        if tp_class == 1 and tp_class == test_points[c,2]:
-           #True P
-           tp += 1
-        elif tp_class == 1 and tp_class != test_points[c,2]:
-           #False P
-           fp += 1
-        elif tp_class == 0 and tp_class == test_points[c,2]:
-           #True N
-           tn += 1
-        elif tp_class == 0 and tp_class != test_points[c,2]:
-           #False N  
-           fn += 1
+        if test_point_classes: # felhantering: om testpunkter inte har klassdata, eftersom test_points inte har klasser
+
+        # jämför tp_class(0 eller 1) mot test_points klasser -> rad[c] i test_points item = [2]
+            if tp_class == 1 and tp_class == test_points[c,2]:
+               #True P
+               tp += 1
+            elif tp_class == 1 and tp_class != test_points[c,2]:
+               #False P
+               fp += 1
+            elif tp_class == 0 and tp_class == test_points[c,2]:
+               #True N
+               tn += 1
+            elif tp_class == 0 and tp_class != test_points[c,2]:
+               #False N  
+               fn += 1
     
-
-
-
-    # print(fp)
-    # print(tp)
-    # print(tn)
-    # print(fn)
-        # print(f"pålitlighet = {accuracy}")
         
-        
-        
+def scramble_dataset(data = data, k=k, iterations = 1): # delar upp och slumpmässigt delar ut punkter av båda klasser till test/data points med jämn fördelning
+    for i in range(iterations):
+        pichu_list = []
+        pikachu_list = []
+        for i in data: # sorterar data beroende på klassifiering
+            if i[2] == "0": 
+                pichu_list.append(i)
+            else:
+                pikachu_list.append(i)
 
-def scramble_dataset(data = data): # delar upp och slumpmässigt delar ut punkter av båda klasser till test/data points med jämn fördelning
-    pichu_list = []
-    pikachu_list = []
-    for i in data: # sorterar data beroende på klassifiering
-        if i[2] == "0": 
-            pichu_list.append(i)
-        else:
-            pikachu_list.append(i)
+        pikachu_list = np.array(pikachu_list, dtype=float)
+        pichu_list = np.array(pichu_list, dtype=float)
 
-    
+        pichu_random = np.random.permutation(pichu_list) # slumpar innan concat
+        pikachu_random = np.random.permutation(pikachu_list)
 
-    pikachu_list = np.array(pikachu_list, dtype=float)
-    pichu_list = np.array(pichu_list, dtype=float)
-    # lista i lista?
+        test_points = np.concatenate((pichu_random[50:], pikachu_random[50:]), axis=0) # fördelar upp pichu/pikachu klasser 50/25 i data/test
+        data_points = np.concatenate((pichu_random[:50], pikachu_random[:50]), axis=0)
 
-    pichu_random = np.random.permutation(pichu_list) # slumpar innan concat
-    pikachu_random = np.random.permutation(pikachu_list)
-    
-    test_points = np.concatenate((pichu_list[50:], pikachu_random[50:]), axis=0) # fördelar upp pichu/pikachu klasser 50/25 i data/test
-    data_points = np.concatenate((pichu_random[:50], pikachu_random[:50]), axis=0)
-    
-    test_points_randomized = np.random.permutation(test_points) # slumpar efter concat, annars är alla pikachu klasser sist i listan
-    data_points_randomized = np.random.permutation(data_points)
-    
-    calc_distances(test_points_randomized, data_points_randomized)
+        test_points_randomized = np.random.permutation(test_points) # slumpar efter concat, annars är alla pikachu klasser sist i listan
+        data_points_randomized = np.random.permutation(data_points)
 
+        calc_distances(test_points_randomized, data_points_randomized, k=k)
 
+def plot_accuracy():
+    '''
+    plotta tp,tn,fp,fn
+    '''
+    accuracy = (tp + tn) / (tp+tn+fp+fn)
+    print(f"pålitlighet: {accuracy*100:.2f}%")
 
 def main_menu():
-
     choices = {
         1: "läs in datapoints och konvertera till .csv",
         2: "plotta datapunkter",
         3: "kalkylera minsta avstånd mellan test och datapunkter, specifiera K",
-        4: "slumpa en fördelning på 100/50 av datapunkterna och kalkylera",
+        4: "slumpa en fördelning på 100/50 av datapunkterna och kalkylera, specifiera K",
+        5: "kör #4 10 gånger, plotta en graf över medel accuracy",
      }
     for key, value in choices.items():
         print(f"{key}, {value}") 
@@ -184,19 +178,19 @@ def main_menu():
 # [24.385289647525166,37.335669057387726,1],
 # [26.525412887538252,35.2192205449002,1]])
 
-# calc_distances()
+calc_distances(test_point_classes=False)
 
 
-scramble_dataset()
-scramble_dataset()
-scramble_dataset()
-scramble_dataset()
-scramble_dataset()
-scramble_dataset()
-scramble_dataset()
-scramble_dataset()
-scramble_dataset()
-scramble_dataset()
-scramble_dataset()
-accuracy = (tp + tn) / (tp+tn+fp+fn)
-print(f"pålitlighet: {accuracy*100:.2f}%")
+# scramble_dataset()
+# scramble_dataset()
+# scramble_dataset()
+# scramble_dataset()
+# scramble_dataset()
+# scramble_dataset()
+# scramble_dataset()
+# scramble_dataset()
+# scramble_dataset()
+# scramble_dataset()
+scramble_dataset(k=6, iterations=10)
+plot_accuracy()
+
