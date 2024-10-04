@@ -5,7 +5,24 @@ import numpy as np
 import os
 import random as rng
 print(os.getcwd())
+
+with open("repos/python-programming-LUDWIG-CARLEGRUND/Labs/datapoints.txt", "r") as txt_file:
+    lines = txt_file.readlines()
+with open("repos/python-programming-LUDWIG-CARLEGRUND/Labs/datapoints.csv", "w") as csv_file:
+    csv_write = csv.writer(csv_file)
+
+    for line in lines[1:]:
+        row = line.strip().split(", ")
+        csv_write.writerow(row)
+    
 csv_file = "repos/python-programming-LUDWIG-CARLEGRUND/Labs/datapoints.csv"
+
+with open(csv_file, "r") as data:
+    lines = data.readlines()
+data = []
+for line in lines:
+    row = line.strip().split(",")
+    data.append(row)
 
 test_points = [
     [25, 32],
@@ -14,32 +31,10 @@ test_points = [
     [20.5, 34]
 ]
 
-k = 1 # antal grannar calc_distances kollar mot
+k = 1 # antal grannar knn_classifier kollar mot
 
 
-
-def txt_to_csv():
-    with open("repos/python-programming-LUDWIG-CARLEGRUND/Labs/datapoints.txt", "r") as txt_file:
-        lines = txt_file.readlines()
-
-    with open("repos/python-programming-LUDWIG-CARLEGRUND/Labs/datapoints.csv", "w") as csv_file:
-        csv_write = csv.writer(csv_file)
-
-        for line in lines[1:]:
-            row = line.strip().split(", ")
-            csv_write.writerow(row)
-    
-txt_to_csv()
-with open(csv_file, "r") as data:
-    lines = data.readlines()
-data = []
-for line in lines:
-    row = line.strip().split(",")
-    data.append(row)
-
-
-
-def plot_tp_vs_dp(csv_file=csv_file):
+def plot_tp_vs_dp(csv_file=csv_file): # plottar datapoints.csv
     csv_data = pd.read_csv(csv_file, names=["width cm", "height cm", "label"])
     width = csv_data["width cm"]
     height = csv_data["height cm"]
@@ -57,96 +52,92 @@ def euc_distance(a,b):
     return np.sqrt(np.sum((a - b) ** 2))
 
 
-def calc_distances(test_points = test_points, data = data, k = k, test_point_classes = True): 
+def calculate_distances(test_point, data): # returnerar avstånd mellan TP/DP samt klass för datapunkt
+    distances = [(euc_distance(test_point[:2], data_point[:2]), data_point[2]) for data_point in data]
+        # för att printa avstånd mellan varje test och datapunkt: 
+        # # TODO gör så att detta funkar efter faktorering, låg prio, kan vara så att det inte går utan en loop i knn_classifier
+        # for c, j in enumerate(distances):
+        #     print(f"avstånd mellan TP:{i+1} och DP:{c+1} {j}")
+    return distances
+
+
+def get_k_nearest_neighbors(distances, k): # sorterar avstånd och returnerar en klasser för grannar i form av lista
+    sorted_distances = sorted(distances, key=lambda x: x[0]) # passar vidare klassifiering 
+    k_lowest = sorted_distances[:k] # lägger till K antal lägsta för varje test punkt
+    return [neighbor[1] for neighbor in k_lowest]
+
+
+def classify_point(k_neighbors, k): # klassifierar en punkt baserat på majoriteten av klass av grannpunkter
+    '''
+    note, round rundar neråt om lika många av varje, 
+    om t.ex k=10 kan denna bli 0.5, en lösning till detta kan vara att ändra vikten av k per iteration.
+    '''
+    return round(sum(k_neighbors) / k)
+
+
+def calculate_accuracy(tp, tn, fp, fn): # returnerar accuracy av klassifieraren
+    return (tp + tn) / (tp + tn + fp + fn)
+
+
+# TODO testa så att omfaktoriseringen av denna är robust!!
+def knn_classifier(test_points=test_points, data=data, k=k, test_point_classes=True): # returnerar även accuracy om detta ska plottas
+
     tp = 0
     fp = 0
     tn = 0
     fn = 0
 
     data = np.array(data, dtype=float)
-    test_points = np.array(test_points, dtype=float) 
-    k_lowest_each_point = []
-    
-    # jämför testpunkter mot datapunkter, passar även vidare klass för varje datapunkt
-    for i, test_point in enumerate(test_points): # för varje rad/element i test_points
-        
-        print(f"Test punkt: {i+1}: {test_point}")
-        distances = [(euc_distance(test_point[:2], data_point[:2]), data_point[2]) for data_point in data] # avstånd för varje rad i data_points
+    test_points = np.array(test_points, dtype=float)
 
-        # för att printa avstånd mellan varje test och datapunkt: avkommentera även 3 rader upp.
-        # for c, j in enumerate(distances):
-            # print(f"avstånd mellan TP:{i+1} och DP:{c+1} {j}")
-        
-        sorted_distances = sorted(distances, key=lambda x: x[0]) # passar vidare klassifiering 
-        k_lowest_each_point.append(sorted_distances[0:k]) # lägger till K antal lägsta för varje test punkt
+    for c, test_point in enumerate(test_points):
 
-    for c, neighbors in enumerate(k_lowest_each_point): 
-        '''
-        note, round rundar neråt om lika många av varje, 
-        om te.x k=10 kan denna bli 0.5, en lösning till detta kan vara att ändra vikten av k per iteration.
-        ''' 
-        labels = [neighbor[1] for neighbor in neighbors]
-        tp_class = round(sum(labels) / k)
-        if tp_class == 1:
-            print(f"test punkt {c+1} är pikachu")
+        distances = calculate_distances(test_point, data)
+        
+        k_neighbors = get_k_nearest_neighbors(distances, k)
+
+        predicted_class = classify_point(k_neighbors,k)
+        
+        if predicted_class == 1:
+            print(f"Test punkt {c + 1} är av klassen Pikachu")
         else:
-            print(f"test punkt {c+1} är pichu")
-        
+            print(f"Test punkt {c + 1} är av klassen Pichu")
 
-        if test_point_classes: # flaggan används när beräkning av medelaccuracy ska ske . . # TODO skulle kunna vara en egen funktion
-        # jämför tp_class(0 eller 1) mot test_points klasser -> rad[c] i test_points item = [2]
-            if tp_class == 1 and tp_class == test_points[c,2]:
-               #True P
-               tp += 1
-            elif tp_class == 1 and tp_class != test_points[c,2]:
-               #False P
-               fp += 1
-            elif tp_class == 0 and tp_class == test_points[c,2]:
-               #True N
-               tn += 1
-            elif tp_class == 0 and tp_class != test_points[c,2]:
-               #False N  
-               fn += 1
+        if test_point_classes: # flaggan används när beräkning av medelaccuracy ska ske . 
+            # jämför predicted class mot test_points verkliga klasser -> rad[c] i test_points item = [2]
+            if predicted_class == test_points[c, 2]:
+                if predicted_class == 1:
+                    tp += 1
+                else:
+                    tn += 1
+            else:
+                if predicted_class == 1:
+                    fp += 1
+                else:
+                    fn += 1
 
     if test_point_classes:
-        accuracy = (tp + tn) / (tp+tn+fp+fn)
-        return accuracy
-        
-
-# def plot_accuracy(accuracies, iterations):
-#     for iteration, accuracy in enumerate(accuracies):
-#         print(f"noggranhet för iteration {iteration+1} = {accuracy}")
-#     average_accuracy = sum(accuracies)/iterations
-#     print(f"medelaccuracy: {average_accuracy}")
-#     plt.plot(iterations, accuracies, marker="o", linestyle="-", color="b", label="accuracy per iteration")
-#     plt.title(f"medelaccuracy: {average_accuracy*100:.2f}")
-#     plt.xlabel('Iteration', fontsize=12)
-#     plt.ylabel('Accuracy', fontsize=12)
-#     plt.grid()
-#     plt.show()
-
+        return calculate_accuracy(tp, tn, fp, fn)
+    
 
 def plot_accuracy(accuracies, iterations):
-    average_accuracy = sum(accuracies) /iterations
-    
-    
-    plt.figure(figsize=(10, 6))
-    plt.plot(iterations, accuracies, marker='o', linestyle='-', color='b', label='Accuracy per iteration')
-    
-    plt.grid(True)
-    plt.title(f'Medelaccuracy: {average_accuracy:.2f}', fontsize=16, fontweight='bold')
-    plt.xlabel('Iteration', fontsize=12)
-    plt.ylabel('Accuracy', fontsize=12)
-    
-    for i, accuracy in enumerate(accuracies):
-        plt.text(iterations[i], accuracies[i] + 0.005, f'{accuracy:.2f}', ha='center', fontsize=10)
-    
-    plt.axhline(y=average_accuracy, color='r', linestyle='--', label=f'Average accuracy: {average_accuracy:.2f}')
+    average_accuracy = sum(accuracies)/iterations
+    print(f"medelaccuracy: {average_accuracy}") 
+    plt.plot(accuracies, marker="o", linestyle="-", color="b", label="accuracy per iteration")
+    plt.axhline(average_accuracy, label=f"Genomsnittlig accuracy ({average_accuracy*100:.2f}%)", linestyle="--")
+    plt.title(f"Accuracy per iteration")
+    plt.xlabel("Iteration")
+    plt.ylabel("Accuracy")
+    plt.legend()
+    plt.grid()
     plt.show()
 
-def scramble_dataset(data = data, k=k, iterations = 10): # delar upp och slumpmässigt delar ut punkter av båda klasser till test/data points med jämn fördelning
+
+
+def scramble_dataset(data = data, k=k, iterations = 10): # delar slumpmässigt ut punkter till tp/dp med jämn fördelning av klasser.
     accuracies = []
-    for i in range(iterations):
+
+    for _ in range(iterations):
         pichu_list = []
         pikachu_list = []
         for i in data: # sorterar data beroende på klassifiering
@@ -167,7 +158,7 @@ def scramble_dataset(data = data, k=k, iterations = 10): # delar upp och slumpm�
         test_points_randomized = np.random.permutation(test_points) # slumpar efter concat, annars är alla pikachu klasser sist i listan
         data_points_randomized = np.random.permutation(data_points)
 
-        accuracy = calc_distances(test_points_randomized, data_points_randomized, k=k)
+        accuracy = knn_classifier(test_points_randomized, data_points_randomized, k=k)
         accuracies.append(accuracy)
     plot_accuracy(accuracies, iterations)
 
@@ -183,47 +174,55 @@ def get_int(label): # hanterar nummer-inmatning
 
 def main_menu():
     choices = {
-        1: "!- kör alla uppgifter enligt labb -!",
-        2: "plotta klasser av datapunkter",
-        3: "klassifiera test punkter mot data punkter, valfri K",
-        4: "kalkylera minsta avstånd 0/50 av datapunkterna och kalkylera, specifiera K, plotta medelaccuracy",
-        5: "ange egna värden för för klassifiering (uppgift 1)"
+        1: "Kör alla uppgifter enligt labb - Börja här!",
+        2: "Plotta klasser av datapunkter",
+        3: "Klassifiera test punkter mot data punkter, valfri K",
+        4: "Kalkylera minsta avstånd 0/50 av datapunkterna och kalkylera, specifiera K, plotta medelaccuracy",
+        5: "Ange egna värden för klassifiering",
+        6: "Avsluta programmet."
      }
-
+    press_enter = "tryck enter för att gå vidare till menyn"
     while True:
         for key, value in choices.items():
             print(f"{key}, {value}") 
         choice = get_int(label="Välj ditt val")
         if choice == 1:
-            x = get_int(label="ange bredd(X)")
-            y = get_int(label="ange Höjd(Y)")
+            x = get_int(label="Ange bredd(X)")
+            y = get_int(label="Ange Höjd(Y)")
             k = 10
             test_point = [x,y]
-            print("\nuppgift 1")
-            calc_distances(test_points=[test_point], test_point_classes=False)
-            print("\nuppgift 2 (k=10, samma x,y värden)")
-            calc_distances(test_points=[test_point], test_point_classes=False, k=k)
-            input("\nEnter för nästa uppgift (slumpa data och fördela, räkna ut och plotta average)")
+            print("\nUppgift 1")
+            knn_classifier(test_points=[test_point], test_point_classes=False)
+            print("\nUppgift 2 (k=10, samma x,y värden)")
+            knn_classifier(test_points=[test_point], test_point_classes=False, k=k)
+            input("\nTryck enter för nästa uppgift: \n(slumpar data och fördelar 50x tp 100x dp, klassifierar, 10 iterations och plottar average accuracy)")
             scramble_dataset()
+            input(press_enter)
         elif choice == 2:
-            print("laddar plot.")
+            print("Visar scatterplot av datapoints.csv.")
             plot_tp_vs_dp()
+            input(press_enter)
         elif choice == 3:
-            print(f"klassifierar {test_points}.. ange antal för K")
+            print(f"Klassifierar {test_points}. Ange antal K")
             k = get_int(label="k")
-            calc_distances(k=k, test_point_classes=False)
+            knn_classifier(k=k, test_point_classes=False)
+            input(press_enter)
         elif choice == 4:
             print(f"Slumpar en fördelning av data points.. \nAnge antal iterationer samt antal K:")
             iterations = get_int(label="iterationer")
             k = get_int(label="K")
             scramble_dataset(iterations=iterations, k=k)
+            input(press_enter)
         elif choice == 5:
-            x = get_int(label="ange bredd(X)")
-            y = get_int(label="ange Höjd(Y)")
-            k = get_int(label="ange antal grannar")
+            x = get_int(label="Ange bredd(X)")
+            y = get_int(label="Ange Höjd(Y)")
+            k = get_int(label="Ange antal grannar")
             test_point = [x,y]
             print(test_point)
-            calc_distances(test_points=[test_point], test_point_classes=False)
+            knn_classifier(test_points=[test_point], test_point_classes=False)
+            input(press_enter)
+        elif choice == 6:
+            exit()
 
 main_menu()
 
@@ -231,7 +230,7 @@ main_menu()
 # plot_tp_vs_dp(csv_file)
 # main_menu()
 
-# calc_distances([[10.5, 20],[18, 23], [30, 32], [10, 20], [12.5, 50]],[[19.332572350434354,32.25325633655492,0],
+# knn_classifier([[10.5, 20],[18, 23], [30, 32], [10, 20], [12.5, 50]],[[19.332572350434354,32.25325633655492,0],
 # [24.73645685241186,35.33291181124776,0],
 # [23.79257560586339,38.10372825362463,1],
 # [24.557612968127465,36.73144402805611,1],
@@ -249,7 +248,7 @@ main_menu()
 # [24.385289647525166,37.335669057387726,1],
 # [26.525412887538252,35.2192205449002,1]])
 
-#calc_distances(test_point_classes=False)
+#knn_classifier(test_point_classes=False)
 
 
 # 
