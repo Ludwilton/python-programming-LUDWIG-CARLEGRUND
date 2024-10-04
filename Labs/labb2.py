@@ -14,7 +14,7 @@ test_points = [
     [20.5, 34]
 ]
 
-k = 10 # antal grannar calc_distances kollar mot
+k = 1 # antal grannar calc_distances kollar mot
 
 tp = 0
 fp = 0
@@ -60,7 +60,7 @@ def euc_distance(a,b):
     return np.sqrt(np.sum((a - b) ** 2))
 
 
-def calc_distances(test_points = test_points, data = data, k = k, test_point_classes = True): # knn algorithm
+def calc_distances(test_points = test_points, data = data, k = k, test_point_classes = True): 
    
     global tp
     global fp
@@ -83,8 +83,15 @@ def calc_distances(test_points = test_points, data = data, k = k, test_point_cla
         k_lowest_each_point.append(sorted_distances[0:k]) # lägger till K antal lägsta för varje test punkt
 
     for c, neighbors in enumerate(k_lowest_each_point): 
+        '''klassifierar test punkter beroende på knn, 
+        obs printar endast, klassifierar inte genom att ändra 
+        originella test data då jag inte ser någon mening med det.
+
+        note, round rundar neråt om lika många av varje, 
+        om te.x k=10 kan denna bli 0.5, en lösning till detta kan vara vikter på nn's
+        ''' 
         labels = [neighbor[1] for neighbor in neighbors]
-        tp_class = round(sum(labels) / k) # round rundar neråt om lika många av varje.
+        tp_class = round(sum(labels) / k)
         if tp_class == 1:
             print(f"test punkt {c+1} är pikachu")
         else:
@@ -92,7 +99,6 @@ def calc_distances(test_points = test_points, data = data, k = k, test_point_cla
         
 
         if test_point_classes: # felhantering: om testpunkter inte har klassdata, eftersom test_points inte har klasser
-
         # jämför tp_class(0 eller 1) mot test_points klasser -> rad[c] i test_points item = [2]
             if tp_class == 1 and tp_class == test_points[c,2]:
                #True P
@@ -152,6 +158,7 @@ def main_menu():
 
     choice = input("Välj ditt val: ")
     while True:
+
         pass
 
 
@@ -181,16 +188,7 @@ def main_menu():
 calc_distances(test_point_classes=False)
 
 
-# scramble_dataset()
-# scramble_dataset()
-# scramble_dataset()
-# scramble_dataset()
-# scramble_dataset()
-# scramble_dataset()
-# scramble_dataset()
-# scramble_dataset()
-# scramble_dataset()
-# scramble_dataset()
+
 scramble_dataset(k=6, iterations=10)
 plot_accuracy()
 
