@@ -79,8 +79,8 @@ def calculate_accuracy(tp, tn, fp, fn): # returnerar accuracy av klassifieraren
     return (tp + tn) / (tp + tn + fp + fn)
 
 
-# TODO testa så att omfaktoriseringen av denna är robust!!
-def knn_classifier(test_points=test_points, data=data, k=k, test_point_classes=True): # returnerar även accuracy om detta ska plottas
+# TODO testa så att omfaktoriseringen av denna är robust!! 1 -> 5 functions
+def knn_classifier(test_points=test_points, data=data, k=k, plot_accuracy=True): # returnerar även accuracy om detta ska plottas
 
     tp = 0
     fp = 0
@@ -103,7 +103,7 @@ def knn_classifier(test_points=test_points, data=data, k=k, test_point_classes=T
         else:
             print(f"Test punkt {c + 1} är av klassen Pichu")
 
-        if test_point_classes: # flaggan används när beräkning av medelaccuracy ska ske . 
+        if plot_accuracy: # flaggan används när beräkning av medelaccuracy ska ske . # TODO flippa bool på flaggan lol
             # jämför predicted class mot test_points verkliga klasser -> rad[c] i test_points item = [2]
             if predicted_class == test_points[c, 2]:
                 if predicted_class == 1:
@@ -116,7 +116,7 @@ def knn_classifier(test_points=test_points, data=data, k=k, test_point_classes=T
                 else:
                     fn += 1
 
-    if test_point_classes:
+    if plot_accuracy:
         return calculate_accuracy(tp, tn, fp, fn)
     
 
@@ -192,9 +192,9 @@ def main_menu():
             k = 10
             test_point = [x,y]
             print("\nUppgift 1")
-            knn_classifier(test_points=[test_point], test_point_classes=False)
+            knn_classifier(test_points=[test_point], plot_accuracy=False)
             print("\nUppgift 2 (k=10, samma x,y värden)")
-            knn_classifier(test_points=[test_point], test_point_classes=False, k=k)
+            knn_classifier(test_points=[test_point], plot_accuracy=False, k=k)
             input("\nTryck enter för nästa uppgift: \n(slumpar data och fördelar 50x tp 100x dp, klassifierar, 10 iterations och plottar average accuracy)")
             scramble_dataset()
             input(press_enter)
@@ -205,7 +205,7 @@ def main_menu():
         elif choice == 3:
             print(f"Klassifierar {test_points}. Ange antal K")
             k = get_int(label="k")
-            knn_classifier(k=k, test_point_classes=False)
+            knn_classifier(k=k, plot_accuracy=False)
             input(press_enter)
         elif choice == 4:
             print(f"Slumpar en fördelning av data points.. \nAnge antal iterationer samt antal K:")
@@ -219,7 +219,7 @@ def main_menu():
             k = get_int(label="Ange antal grannar")
             test_point = [x,y]
             print(test_point)
-            knn_classifier(test_points=[test_point], test_point_classes=False)
+            knn_classifier(test_points=[test_point], plot_accuracy=False)
             input(press_enter)
         elif choice == 6:
             exit()
@@ -248,7 +248,7 @@ main_menu()
 # [24.385289647525166,37.335669057387726,1],
 # [26.525412887538252,35.2192205449002,1]])
 
-#knn_classifier(test_point_classes=False)
+#knn_classifier(plot_accuracy=False)
 
 
 # 
