@@ -183,4 +183,4 @@ print(abs(v))
 print(u[1])
 print(Vector.validate2d(v))
 
-Vector.plot((u*v))
+Vector.plot()
