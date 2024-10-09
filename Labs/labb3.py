@@ -13,7 +13,7 @@ x = data[:, 0]
 y = data[:, 1]
 
 # print(x)
-k = -0.50  # Lutning
+k = -0.50  # Lutning 
 m = 0 # skärningspunkt
 
 y_line = k * x + m
@@ -33,7 +33,7 @@ def classify_points(data=data, k=k, m=m, plot=False):
     below_line = []
     classified_points = []
 
-    
+
     for row in data:
         x, y = row
 
@@ -46,7 +46,7 @@ def classify_points(data=data, k=k, m=m, plot=False):
         
         classified_points.append([x,y,label])
 
-    if plot:
+    if plot: # skulle kunna endast använda classified_points för att plotta, skippa above/below, om label == color = "--" osv
         return above_line, below_line
     else:
         return classified_points
@@ -54,6 +54,7 @@ def classify_points(data=data, k=k, m=m, plot=False):
 
 def plot_classified_points():
     above_line, below_line = classify_points(plot=True)
+
 
     x_a = [point[0] for point in above_line]
     y_a = [point[1] for point in above_line]
@@ -83,3 +84,5 @@ with open("repos/python-programming-LUDWIG-CARLEGRUND/Labs/labelled_data.csv", "
 
     for row in classified_data:
         csv_writer.writerow(row)
+
+plot_line()
