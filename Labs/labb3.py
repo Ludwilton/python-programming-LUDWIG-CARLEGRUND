@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import csv
 
 csv_file = "repos/python-programming-LUDWIG-CARLEGRUND/Labs/unlabelled_data.csv"
 
@@ -27,23 +28,32 @@ def plot_line():
     plt.show()
 
 
-def classify_points(data=data, k=k, m=m):
+def classify_points(data=data, k=k, m=m, plot=False):
     above_line = []
     below_line = []
+    classified_points = []
+
     
     for row in data:
         x, y = row
 
         if y > k * x + m:
             above_line.append([x,y])
+            label = 1
         else:
             below_line.append([x,y])
+            label = 0
+        
+        classified_points.append([x,y,label])
 
-    return above_line, below_line
+    if plot:
+        return above_line, below_line
+    else:
+        return classified_points
 
 
 def plot_classified_points():
-    above_line, below_line = classify_points()
+    above_line, below_line = classify_points(plot=True)
 
     x_a = [point[0] for point in above_line]
     y_a = [point[1] for point in above_line]
@@ -54,7 +64,7 @@ def plot_classified_points():
     plt.scatter(x_a, y_a, color="yellow")
     plt.scatter(x_b, y_b, color="blue")
 
-    plt.plot(x, y_line, color="red", label="y=kx+m")
+    plt.plot(x, y_line, color="red", label="separator")
     plt.xlabel("X")
     plt.ylabel("Y")
     plt.legend()
@@ -64,4 +74,12 @@ def plot_classified_points():
 
 plot_classified_points()
 
+classified_data = classify_points()
+classified_data = np.array(classified_data, dtype=float)
+print(classified_data)
 
+with open("repos/python-programming-LUDWIG-CARLEGRUND/Labs/labelled_data.csv", "w") as w_file:
+    csv_writer = csv.writer(w_file)
+
+    for row in classified_data:
+        csv_writer.writerow(row)
