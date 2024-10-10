@@ -46,7 +46,7 @@ def classify_points(data=data, k=k, m=m, plot=False):
         
         classified_points.append([x,y,label])
 
-    if plot: # skulle kunna endast använda classified_points för att plotta, skippa above/below, om label == color = "--" osv
+    if plot: # skulle kunna endast använda classified_points för att plotta, skippa above/below, om label == 0, color = "--" osv
         return above_line, below_line
     else:
         return classified_points
@@ -86,3 +86,16 @@ with open("repos/python-programming-LUDWIG-CARLEGRUND/Labs/labelled_data.csv", "
         csv_writer.writerow(row)
 
 plot_line()
+
+def plot_classified_points_2():
+    data = classify_points()
+    data = np.array(data, dtype=float)
+    x = data[:, 0]
+    y = data[:, 1]
+    l = data[:, 2]
+    plt.scatter(x[l == 0], y[l==0], color="red", label="0")
+    plt.scatter(x[l == 1], y[l==1], color="blue", label="1")
+    plt.plot(x, y_line, color="red", label="y=kx+m")
+    plt.show()
+
+plot_classified_points_2()
