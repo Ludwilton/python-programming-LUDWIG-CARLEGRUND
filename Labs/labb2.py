@@ -4,8 +4,11 @@ import pandas as pd
 import numpy as np
 import os
 import random as rng
+
+# Debug prints shouldn't be in the final delivery
 print(os.getcwd())
 
+# this is a bit overly complicated. Since you are using pandas, just use pandas.read_csv with skipwors=1
 with open("repos/python-programming-LUDWIG-CARLEGRUND/Labs/datapoints.txt", "r") as txt_file:
     lines = txt_file.readlines()
 with open("repos/python-programming-LUDWIG-CARLEGRUND/Labs/datapoints.csv", "w") as csv_file:
@@ -24,6 +27,7 @@ for line in lines:
     row = line.strip().split(",")
     data.append(row)
 
+# better to read these from the file
 test_points = [
     [25, 32],
     [24.2, 31.5],
@@ -78,6 +82,9 @@ def classify_point(k_neighbors, k): # klassifierar en punkt baserat på majorite
 def calculate_accuracy(tp, tn, fp, fn): # returnerar accuracy av klassifieraren
     return (tp + tn) / (tp + tn + fp + fn)
 
+# Raphael says: Den här funktionen är lite väl komplex. Den har också sid-effekter som gör den svår att använda
+# utanför detta skript (printar saker istället för att returnera dem). Returen är förvånansvärt accuracy och inte
+# klassifikationen. 
 
 # TODO testa så att omfaktoriseringen av denna är robust!! 1 -> 5 functions
 def knn_classifier(test_points=test_points, data=data, k=k, plot_accuracy=True): # returnerar även accuracy om detta ska plottas
@@ -133,6 +140,7 @@ def plot_accuracy(accuracies, iterations):
     plt.show()
 
 
+# en mycket enklare lösning hade varit att köra np.random.shuffle(data) _innan_ du delar upp dem i pikachu/pichu
 
 def scramble_dataset(data = data, k=k, iterations = 10): # delar slumpmässigt ut punkter till tp/dp med jämn fördelning av klasser.
     accuracies = []
@@ -171,7 +179,8 @@ def get_int(label): # hanterar nummer-inmatning
         except ValueError:
             print("felaktig inmatning, ange siffror.")
 
-
+# Meny baserade interface är väldigt klumpiga i text-form. Ett bättre val är argument till programmet (tex 'python3 labb2.py --plot' för alt 2 osv)
+# Denna sortens indelning lämpar sig bättre för en jupyter notebook, där varje alternativ iställer är en cell.
 def main_menu():
     choices = {
         1: "Kör alla uppgifter enligt labb - Börja här!",
