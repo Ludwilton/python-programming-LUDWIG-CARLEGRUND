@@ -3,22 +3,27 @@ import numpy as np
 import pandas as pd
 import csv
 
-csv_file = "repos/python-programming-LUDWIG-CARLEGRUND/Labs/unlabelled_data.csv"
 
-data = pd.read_csv(csv_file, header=None)
+def get_data():
+    csv_file = "repos/python-programming-LUDWIG-CARLEGRUND/Labs/unlabelled_data.csv"
 
-# print(data)
-data = np.array(data, dtype=float)
-x = data[:, 0]
-y = data[:, 1]
+    data = pd.read_csv(csv_file, header=None)
+    data = np.array(data, dtype=float)
+    return data
 
-# print(x)
-k = -0.5  # Lutning 
-m = 0 # skärningspunkt
 
-y_line = k * x + m
+def get_default_k():
+    return -.5  # Lutning 
 
-def plot_line():
+
+def get_default_m():
+    return 0 # skärningspunkt
+
+
+def plot_line(data=get_data(), k=get_default_k(), m=get_default_m()):
+    x = data[:, 0]
+    y = data[:, 1]
+    y_line = k * x + m
     plt.scatter(x, y,)
     plt.plot(x, y_line, color="red", label="y=kx+m")
     plt.xlabel("X")
@@ -28,7 +33,7 @@ def plot_line():
     plt.show()
 
 
-def classify_points(data=data, k=k, m=m):
+def classify_points(data=get_data(), k=get_default_k(), m=get_default_m()):
     classified_points = []
 
     for row in data:
@@ -40,8 +45,8 @@ def classify_points(data=data, k=k, m=m):
             label = 0
         
         classified_points.append([x,y,label])
-
     return classified_points
+
 
 def classify_and_write_labels():
     classified_data = classify_points()
@@ -55,13 +60,14 @@ def classify_and_write_labels():
             csv_writer.writerow(row)
     print(f"data classified and saved to {w_file}")
 
-def plot_classified_points_2():
 
+def plot_classified_points_2(k = get_default_k(), m = get_default_m()):
     data = classify_points()
     data = np.array(data, dtype=float)
     x = data[:, 0]
     y = data[:, 1]
     l = data[:, 2]
+    y_line = k * x + m
     plt.scatter(x[l == 0], y[l==0], color="yellow", label="0")
     plt.scatter(x[l == 1], y[l==1], color="blue", label="1")
     plt.plot(x, y_line, color="red", label="separator")
@@ -69,6 +75,6 @@ def plot_classified_points_2():
     plt.xlim(-5, 5)
     plt.show()
 
+plot_line()
 plot_classified_points_2()
-# plot_line()
 classify_and_write_labels()
