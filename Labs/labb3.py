@@ -75,6 +75,8 @@ def plot_classified_points_2(k = get_default_k(), m = get_default_m()):
     plt.xlim(-5, 5)
     plt.show()
 
-plot_line()
-plot_classified_points_2()
-classify_and_write_labels()
+
+if __name__ == "__main__":
+    plot_line()
+    plot_classified_points_2()
+    classify_and_write_labels()
