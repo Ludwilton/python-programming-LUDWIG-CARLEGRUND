@@ -4,6 +4,13 @@ import pandas as pd
 import csv
 import os
 
+def get_default_k():
+    return -.5  # Lutning 
+
+
+def get_default_m():
+    return 0 # skärningspunkt
+
 
 def get_data():
     path = os.path.dirname(__file__) + "/unlabelled_data.csv"
@@ -14,28 +21,9 @@ def get_data():
     return data
 
 
-def get_default_k():
-    return -.5  # Lutning 
 
 
-def get_default_m():
-    return 0 # skärningspunkt
-
-
-def plot_line(data=get_data(), k=get_default_k(), m=get_default_m()):
-    x = data[:, 0]
-    y = data[:, 1]
-    y_line = k * x + m
-    plt.scatter(x, y,)
-    plt.plot(x, y_line, color="red", label="y=kx+m")
-    plt.xlabel("X")
-    plt.ylabel("Y")
-    plt.legend()
-    plt.grid()
-    plt.show()
-
-
-def classify_points(data=get_data(), k=get_default_k(), m=get_default_m()):
+def classify_data(data=get_data(), k=get_default_k(), m=get_default_m()):
     classified_points = []
     count_1 = 0
     count_2 = 0
@@ -56,8 +44,8 @@ def classify_points(data=get_data(), k=get_default_k(), m=get_default_m()):
     return classified_points
 
 
-def write_classified_labels():
-    classified_data = classify_points()
+def write_classified_labels(k = get_default_k(), m = get_default_m()):
+    classified_data = classify_points(k=k, m=m)
     classified_data = np.array(classified_data, dtype=float)
     print(classified_data)
     path = os.path.dirname(__file__) + "/labelled_data.csv"
@@ -68,6 +56,19 @@ def write_classified_labels():
         for row in classified_data:
             csv_writer.writerow(row)
     print(f"data classified and saved to {w_file}")
+
+
+def plot_line(data=get_data(), k=get_default_k(), m=get_default_m()):
+    x = data[:, 0]
+    y = data[:, 1]
+    y_line = k * x + m
+    plt.scatter(x, y,)
+    plt.plot(x, y_line, color="red", label="y=kx+m")
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    plt.legend()
+    plt.grid()
+    plt.show()
 
 
 def plot_classified_points(k = get_default_k(), m = get_default_m(), axes=None, color="red", label="separator line"):
@@ -82,7 +83,6 @@ def plot_classified_points(k = get_default_k(), m = get_default_m(), axes=None, 
     axes.scatter(x[l == 1], y[l==1], color="blue")
     axes.plot(x, y_line, color=color, label=label)
     axes.set(ylim = (-5, 5), xlim = (-5, 5))
-
 
 
 if __name__ == "__main__":
